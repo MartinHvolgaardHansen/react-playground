@@ -1,24 +1,23 @@
-import { ReactElement } from "react";
+import { ReactElement, TableHTMLAttributes } from "react";
 
-interface ListViewProps<T> {
+interface ListViewProps<T> extends TableHTMLAttributes<HTMLElement> {
   items: T[];
-  header?: () => ReactElement;
+  headerTemplate?: () => ReactElement;
   itemTemplate: (item: T) => ReactElement;
-  footer?: () => ReactElement;
-  className?: string;
+  footerTemplate?: () => ReactElement;
 }
 
-function ListView<T>(props: ListViewProps<T>) {
-  const items: T[] = props.items;
+export default function ListView<T>(props: ListViewProps<T>) {
+  const { items, headerTemplate: header, itemTemplate, footerTemplate: footer, className, ...tableAttributes } = props;
   let i = 0;
 
   return (
-    <table className={props.className}>
+    <table {...tableAttributes}>
       {
-        props.header ?
+        header ?
           <thead>
             <tr>
-              {props.header()}
+              {header()}
             </tr>
           </thead>
           : null
@@ -27,16 +26,16 @@ function ListView<T>(props: ListViewProps<T>) {
         {
           items.map(item =>
             <tr key={i++}>
-              {props.itemTemplate(item)}
+              {itemTemplate(item)}
             </tr>
           )
         }
       </tbody>
       {
-        props.footer ?
+        footer ?
           <tfoot>
             <tr>
-              {props.footer()}
+              {footer()}
             </tr>
           </tfoot>
           : null
@@ -44,5 +43,3 @@ function ListView<T>(props: ListViewProps<T>) {
     </table>
   );
 }
-
-export default ListView;
